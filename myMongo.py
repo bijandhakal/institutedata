@@ -14,6 +14,7 @@ class CMongoDB(object):
 
     def insert(self,collection,data,one=True):
         logger.info('INSERTING :: {}'.format(collection))
+        logger.info('DATA :: {}'.format(data))
         if(one):
             self.db[collection].insert_one(data)
         else:

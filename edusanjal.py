@@ -93,9 +93,17 @@ if __name__ == '__main__':
     getVisitedCourse()
     getVisitedCollege()
     try:
-        course_thread = threading.Thread(target=handle_course, args = ( ROOT['COURSE'], ) )
-        course_thread.start()
-        college_thread = threading.Thread(target=handle_college, args = ( ROOT['COLLEGE'], ) )
-        college_thread.start()
+        # course_thread = threading.Thread(target=handle_course, args = ( ROOT['COURSE'], ) )
+        # course_thread.start()
+        # college_thread = threading.Thread(target=handle_college, args = ( ROOT['COLLEGE'], ) )
+        # college_thread.start()
+        # college_thread = threading.Thread(target=handle_college, args = ( ROOT['COLLEGE'] + '?page=100', ) )
+        # college_thread.start()
+        # college_thread = threading.Thread(target=handle_college, args = ( ROOT['COLLEGE'] + '?page=200', ) )
+        # college_thread.start()
+        # college_thread1 = threading.Thread(target=handle_college, args = ( ROOT['COLLEGE'] + '?page=390',) )
+        # college_thread1.start()
+        # college_thread2 = threading.Thread(target=handle_college, args = ( ROOT['COLLEGE'] + '?page=400',) )
+        # college_thread2.start()
     except:
        print "Error: unable to start thread"

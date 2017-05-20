@@ -1,31 +1,29 @@
 import requests
 from bs4 import BeautifulSoup
 from re import sub
-from myMongo import InsMongo
+from myMongo import CMongoDB
 from datetime import datetime
 
 COLLEGE_ROOT = 'http://edusanjal.com/college/'
-mongodb = InsMongo()
+mongodb = CMongoDB()
+Parse = []
 # response = requests.get(college)
 # soup = BeautifulSoup(response.text,'html.parser')
+def get_parsed():
+    print list(mongodb.get('edusanjal_parsed_colleges'))
 
-def get_college(url):
-    print("COLLEGE_ROOT::",url)
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text,'html.parser')
-    colleges = soup.select('.detlsTitle a[href^="/college/"]')
+def get_college(skip=0,limit=6000):
+    colleges = mongodb.get('college',skip=skip,limit=limit)
     for college in colleges:
-        parse_college(college['href'])
-    mongodb.insert('visited',{'url':url,'date':datetime.now()})
-    snext = soup.find('a',{'rel':'next'})['href']
-    print(snext)
-    get_college(COLLEGE_ROOT+snext)
+        page = college['soup']
+        soup = BeautifulSoup(page,"lxml")
+        try:
+            parse_college(soup)
+            mongodb.insert('edusanjal_parsed_colleges',{'id':college['_id'], 'date':datetime.now()})
+        except:
+            continue
 
-def parse_college(vurl):
-    print("COLLEGE_URL::",vurl)
-    prefix = 'http://edusanjal.com/'
-    response = requests.get(prefix+vurl)
-    soup = BeautifulSoup(response.text,"lxml")
+def parse_college(soup):
     try:
         name = sub(ur'\s+',' ', soup.find('h1',{'class':'mainHeading'}).get_text())
     except Exception as e:
@@ -56,12 +54,11 @@ def parse_college(vurl):
         'university':university,
         'contact':contact,
         'email':email,
-        'url':url
+        'url':url,
+        'date': datetime.now()
     }
-    mongodb.insert('college',data)
-    mongodb.insert('url',{'name':name, 'url':url, 'date':datetime.now()})
-    mongodb.insert('visited',{'url':vurl, 'date':datetime.now()})
+    mongodb.insert('edusanjal_colleges',data)
 
-
-
-get_college(COLLEGE_ROOT)
+get_college(skip=0)
+#
+# get_parsed()
